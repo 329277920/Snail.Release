@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace Snail.Release.Business.Config
 {
     /// <summary>
-    /// 模板配置项
+    /// 发布项配置
     /// </summary>
     public class ReleaseItem
     {
@@ -30,55 +30,18 @@ namespace Snail.Release.Business.Config
         /// </summary>
         public string Part { get; set; }
 
+        /// <summary>
+        /// 该发布项是否匹配指定的路径
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public bool IsMatch(string path)
         {
             Init();
             return this._reg.IsMatch(path);
-        }
+        }       
 
-        /// <summary>
-        /// 从当前请求中解析出物理路径
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns>返回模板,物理路径</returns>
-        public string PhysicalPath(string path)
-        {
-            Init();
-            if (this._parts.Count <= 0)
-            {
-                return null;
-            }
-            var pathParts = SplitPath(path);
-            if (pathParts.Length != this._parts.Count)
-            {
-                return null;
-            }            
-            StringBuilder pathBuilder = new StringBuilder();
-            bool isAppendParam = false;
-            for (var i = 0; i < pathParts.Length; i++)
-            {
-                var part = this._parts[i];                 
-                if (part.PartType == TempItemPartTypes.Path)
-                {
-                    pathBuilder.Append(pathParts[i]).Append("\\");
-                }
-                else if (part.PartType == TempItemPartTypes.Parameter)
-                {
-                    pathBuilder.Append(pathParts[i]);
-                    if (isAppendParam)
-                    {
-                        pathBuilder.Append("_");
-                    }
-                    else
-                    {
-                        isAppendParam = true;
-                    }
-                }                
-            }
-            return pathBuilder.ToString(); 
-        }
-
-        private List<TempItemPart> _parts;
+        public List<TempItemPart> Parts;
        
         private bool _isInit = false;
 
@@ -97,8 +60,8 @@ namespace Snail.Release.Business.Config
                     return;
                 }
                 this._isInit = true;
-            }           
-            this._parts = new List<TempItemPart>();
+            }
+            Parts = new List<TempItemPart>();
             if (string.IsNullOrEmpty(this.Path) || string.IsNullOrEmpty(this.Part))
             {
                 return;
@@ -113,7 +76,7 @@ namespace Snail.Release.Business.Config
             }
             for (var i = 0; i < pathItems.Length; i++)
             {
-                this._parts.Add(new TempItemPart()
+                Parts.Add(new TempItemPart()
                 {
                     PartType = partItems[i],
                     Path = pathItems[i]
@@ -121,17 +84,6 @@ namespace Snail.Release.Business.Config
             }
         }
 
-        private string[] SplitPath(string path)
-        {
-            if (path.StartsWith("/"))
-            {
-                path = path.Substring(1);
-            }
-            if (path.EndsWith("/"))
-            {
-                path = path.Substring(0, path.Length - 1);
-            }
-            return  path.Split('/');
-        }
+       
     }
 }

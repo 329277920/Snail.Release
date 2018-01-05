@@ -18,8 +18,9 @@ namespace Snail.Release.Controllers
         [HttpGet]
         public ActionResult Release()
         {
-            var relaseParams = HttpContext.Items[SystemConfig.Instance.CacheItemParams] as ReleaseParams;
-            return base.View(relaseParams.Template);                        
+            var releaseParams = HttpContext.Items[SystemConfig.Instance.CacheItemParams] as ReleaseParams;
+            this.ViewBag.Params = releaseParams;
+            return base.View(releaseParams.Template);
         }       
     }
 }

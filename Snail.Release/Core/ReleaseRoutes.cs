@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Snail.Release.Business.Config;
+using System.Text;
 
 namespace Snail.Release.Core
 {
@@ -39,26 +40,76 @@ namespace Snail.Release.Core
             if (string.IsNullOrEmpty(path))
             {
                 return null;
-            }            
-            foreach (var temp in items)
+            }             
+            foreach (var item in items)
             {
-                if (temp.IsMatch(path))
+                var releaseParams = Route(path, item);
+                if (releaseParams != null)
                 {
-                    var pyPath = temp.PhysicalPath(path);
-                    if (string.IsNullOrEmpty(pyPath))
-                    {
-                        continue;
-                    }
-                    pyPath = Path.Combine(SystemConfig.Instance.StaticFilePath, pyPath);
-                    var releaseParams = new ReleaseParams()
-                    {
-                        Template = temp.Template,
-                        FilePath = pyPath
-                    };
-                    return releaseParams;
-                }               
+                    releaseParams.Uri = path;
+                }
+                return releaseParams;
             }
             return null;
+        }
+        
+        /// <summary>
+        /// 从当前请求中解析出ReleaseParams
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="releaseItem"></param>
+        /// <returns>返回模板,物理路径</returns>
+        public ReleaseParams Route(string path, ReleaseItem releaseItem)
+        {
+            if (!releaseItem.IsMatch(path) || releaseItem.Parts.Count <= 0)
+            {
+                return null;
+            }            
+            var pathParts = SplitPath(path);
+            if (pathParts.Length != releaseItem.Parts.Count)
+            {
+                return null;
+            }
+            var releaseParams = new ReleaseParams() { Template = releaseItem.Template };
+            StringBuilder pathBuilder = new StringBuilder();
+            bool isAppendParam = false;
+            for (var i = 0; i < pathParts.Length; i++)
+            {
+                var part = releaseItem.Parts[i];
+                if (part.PartType == TempItemPartTypes.Path)
+                {
+                    releaseParams.Paths.Add(pathParts[i]);
+                    pathBuilder.Append(pathParts[i]).Append("\\");
+                }
+                else if (part.PartType == TempItemPartTypes.Parameter)
+                {
+                    releaseParams.Parameters.Add(pathParts[i]);
+                    pathBuilder.Append(pathParts[i]);
+                    if (isAppendParam)
+                    {
+                        pathBuilder.Append("_");
+                    }
+                    else
+                    {
+                        isAppendParam = true;
+                    }
+                }
+            }
+            releaseParams.FilePath = Path.Combine(SystemConfig.Instance.StaticFilePath, pathBuilder.ToString());
+            return releaseParams;
+        }
+
+        private string[] SplitPath(string path)
+        {
+            if (path.StartsWith("/"))
+            {
+                path = path.Substring(1);
+            }
+            if (path.EndsWith("/"))
+            {
+                path = path.Substring(0, path.Length - 1);
+            }
+            return path.Split('/');
         }
     }
 }
