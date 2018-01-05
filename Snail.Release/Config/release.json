@@ -1,0 +1,11 @@
+﻿{
+  "items": [
+    {
+      "name": "news",
+      "template": "newsInfo.cshtml",
+      "path": "news/[a-zA-Z]+/[1-9]{1}[0-9]*",
+      "part": "none/path/parameter",
+      "target": "mem|file"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+﻿@DateTime.Now
+@{     
+    var html = "";
+    var client = new System.Net.Http.HttpClient();
+    using (var response = client.GetStreamAsync("http://www.163.com/").Result)
+    {
+        using (System.IO.StreamReader sr = new System.IO.StreamReader(response, System.Text.Encoding.GetEncoding("gb2312")))
+        {
+            html = sr.ReadToEnd();
+        }
+    }
+    @html
+}
