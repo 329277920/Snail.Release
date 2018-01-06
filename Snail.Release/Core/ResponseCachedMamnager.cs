@@ -70,11 +70,11 @@ namespace Snail.Release.Core
                     result = await provider.Get(releaseParams);
                     if (result != null)
                     {
-                        if (provider != null)
+                        if (preProvider != null)
                         {
                             await provider.Set(releaseParams, result);
                         }
-                        continue;
+                        break;
                     }
                     preProvider = provider;
                 }

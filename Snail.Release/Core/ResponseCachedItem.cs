@@ -29,10 +29,15 @@ namespace Snail.Release.Core
         {
             Body = ((ResponseCachedStream)context.Response.Body).ToArray();
             Headers.Clear();
+            Headers.Add("Content-Length", Body.Length.ToString());
             if (context.Response.Headers != null)
             {
                 foreach (var header in context.Response.Headers)
                 {
+                    if (header.Key.Equals("Transfer-Encoding"))
+                    {
+                        continue;
+                    }
                     Headers.Add(header.Key, header.Value);
                 }
             }

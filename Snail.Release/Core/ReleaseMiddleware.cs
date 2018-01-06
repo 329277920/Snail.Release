@@ -29,7 +29,8 @@ namespace Snail.Release.Core
                 await base.Invoke(context);
                 return;
             }
-            var reRelease = context.Request.Headers.ContainsKey(SystemConfig.Instance.ReReleaseHeader)
+            var reRelease = context.Request.Method != "GET"
+                || context.Request.Headers.ContainsKey(SystemConfig.Instance.ReReleaseHeader)
                 || context.Request.Query.ContainsKey(SystemConfig.Instance.ReReleaseHeader);
             var oResult = reRelease ? false : await Output(context, releaseParams);
             if (oResult)
