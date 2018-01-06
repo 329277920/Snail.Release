@@ -31,6 +31,11 @@ namespace Snail.Release.Business.Config
         public string Part { get; set; }
 
         /// <summary>
+        /// 缓存提供者
+        /// </summary>
+        public string Providers { get; set; }
+
+        /// <summary>
         /// 该发布项是否匹配指定的路径
         /// </summary>
         /// <param name="path"></param>
@@ -46,6 +51,24 @@ namespace Snail.Release.Business.Config
         private bool _isInit = false;
 
         private Regex _reg;
+
+        private string[] _providers;
+
+        public string[] TryGetProviders
+        {
+            get
+            {
+                if (_providers == null)
+                {
+                    if (string.IsNullOrEmpty(Providers))
+                    {
+                        _providers = new string[0];
+                    }
+                    _providers = Providers.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                }
+                return _providers;
+            }
+        }
         
         private void Init()
         {

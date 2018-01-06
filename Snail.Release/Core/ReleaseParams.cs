@@ -23,7 +23,7 @@ namespace Snail.Release.Core
         /// <summary>
         /// 获取指定缓存目标对象
         /// </summary>
-        public int CachedTargets { get; set; }
+        public string[] CachedProviders { get; set; }
 
         /// <summary>
         /// 获取在客户端请求路径中解析出的参数集合

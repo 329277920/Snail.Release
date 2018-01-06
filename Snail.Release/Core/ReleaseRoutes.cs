@@ -29,7 +29,7 @@ namespace Snail.Release.Core
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public ReleaseParams Parse(HttpContext context)
+        public ReleaseParams Route(HttpContext context)
         {
             var items = ReleaseConfig.Instance.Items;
             if (items == null || items.Length <= 0)
@@ -43,7 +43,7 @@ namespace Snail.Release.Core
             }             
             foreach (var item in items)
             {
-                var releaseParams = Route(path, item);
+                var releaseParams = Parse(path, item);
                 if (releaseParams != null)
                 {
                     releaseParams.Uri = path;
@@ -52,25 +52,26 @@ namespace Snail.Release.Core
             }
             return null;
         }
-        
+
         /// <summary>
         /// 从当前请求中解析出ReleaseParams
         /// </summary>
         /// <param name="path"></param>
         /// <param name="releaseItem"></param>
         /// <returns>返回模板,物理路径</returns>
-        public ReleaseParams Route(string path, ReleaseItem releaseItem)
+        public ReleaseParams Parse(string path, ReleaseItem releaseItem)
         {
             if (!releaseItem.IsMatch(path) || releaseItem.Parts.Count <= 0)
             {
                 return null;
-            }            
+            }
             var pathParts = SplitPath(path);
             if (pathParts.Length != releaseItem.Parts.Count)
             {
                 return null;
             }
             var releaseParams = new ReleaseParams() { Template = releaseItem.Template };
+            releaseParams.CachedProviders = releaseItem.TryGetProviders;
             StringBuilder pathBuilder = new StringBuilder();
             bool isAppendParam = false;
             for (var i = 0; i < pathParts.Length; i++)

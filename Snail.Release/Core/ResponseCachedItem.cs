@@ -14,11 +14,11 @@ namespace Snail.Release.Core
     [Serializable]
     public class ResponseCachedItem
     {
-        public Dictionary<string,string> Headers { get; set; }
+        public Dictionary<string, string> Headers { get; set; }
 
         public byte[] Body { get; set; }
 
-        public int StatusCode { get; set; }         
+        public int StatusCode { get; set; }
 
         public ResponseCachedItem()
         {
@@ -37,6 +37,6 @@ namespace Snail.Release.Core
                 }
             }
             StatusCode = context.Response.StatusCode;
-        }                
+        }        
     }
 }

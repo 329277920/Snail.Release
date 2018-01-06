@@ -16,9 +16,11 @@ namespace Snail.Release.Business.Config
 
         public ReleaseItem[] Items { get; set; }
 
+        public CachedProvider[] Providers { get; set; }
+
         public ReleaseConfig()
         {
-            this.Items = new ReleaseItem[0];
+            this.Items = new ReleaseItem[0];            
         }
 
         public static ReleaseConfig Instance

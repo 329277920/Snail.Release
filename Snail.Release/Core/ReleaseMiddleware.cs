@@ -23,7 +23,7 @@ namespace Snail.Release.Core
 
         public override async Task Invoke(HttpContext context)
         {
-            var releaseParams = ReleaseRoutes.Instance.Parse(context);
+            var releaseParams = ReleaseRoutes.Instance.Route(context);
             if (releaseParams == null)
             {
                 await base.Invoke(context);
@@ -41,7 +41,7 @@ namespace Snail.Release.Core
             context.Request.Path = SystemConfig.Instance.ReleasePath;
             await base.Invoke(context);
             var cachedItem = new ResponseCachedItem(context);
-            await Input(cachedItem, releaseParams);
+            await Input(cachedItem, releaseParams);            
         }
 
         /// <summary>
@@ -59,7 +59,15 @@ namespace Snail.Release.Core
                 {
                     return false;
                 }
-                await context.Response.Body.WriteAsync(cachedItem.Body, 0, cachedItem.Body.Length);                 
+                context.Response.StatusCode = cachedItem.StatusCode;
+                foreach (var header in cachedItem.Headers)
+                {
+                    if (!context.Response.Headers.ContainsKey(header.Key))
+                    {
+                        context.Response.Headers.Add(header.Key, header.Value);
+                    }
+                }               
+                await context.Response.Body.WriteAsync(cachedItem.Body, 0, cachedItem.Body.Length);                
                 return true;
             }
             catch (Exception ex)
