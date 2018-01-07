@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Snail.Release.Core;
 
 namespace Snail.Release
-{
+{      
     public class Startup
     {
         public Startup(IConfiguration configuration)
