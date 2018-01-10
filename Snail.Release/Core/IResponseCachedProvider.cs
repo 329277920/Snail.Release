@@ -24,5 +24,10 @@ namespace Snail.Release.Core
         /// <param name="cachedItem">缓存项</param>
         /// <returns>返回成功或失败</returns>
         Task<bool> Set(ReleaseParams releaseParams, ResponseCachedItem cachedItem);
+
+        /// <summary>
+        /// 获取或设置缓存提供者扩展配置
+        /// </summary>
+        dynamic Config { get; set; }
     }
 }

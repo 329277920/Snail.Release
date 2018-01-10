@@ -11,9 +11,9 @@ namespace Snail.Release.Core
     public class ReleaseParams
     {
         /// <summary>
-        /// 获取请求资源对应的物理路径
+        /// 获取请求资源对应的唯一Key值
         /// </summary>
-        public string FilePath { get; set; }   
+        public string Key { get; set; }   
                  
         /// <summary>
         /// 获取请求路径对应的模板
@@ -28,22 +28,21 @@ namespace Snail.Release.Core
         /// <summary>
         /// 获取在客户端请求路径中解析出的参数集合
         /// </summary>
-        public List<string> Parameters { get;  }
-
-        /// <summary>
-        /// 获取在客户端请求路径中解析出的生成物理路径集合
-        /// </summary>
-        public List<string> Paths { get; }
+        public List<string> Parameters { get;  }        
 
         /// <summary>
         /// 获取获设置客户端真实请求路径
         /// </summary>
         public string Uri { get; set; }
 
+        /// <summary>
+        /// 获取或设置是否启用客户端缓存
+        /// </summary>
+        public bool ClientCached { get; set; }
+
         public ReleaseParams()
         {
-            Parameters = new List<string>();
-            Paths = new List<string>();
+            Parameters = new List<string>();           
         }
     }
 }

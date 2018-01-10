@@ -14,13 +14,11 @@ namespace Snail.Release.Business.Config
     {
         private const string ConfigFilePath = "Config/release.json";
 
-        public ReleaseItem[] Items { get; set; }
-
-        public CachedProvider[] Providers { get; set; }
+        public ReleaseConfigItem[] Items { get; set; }      
 
         public ReleaseConfig()
         {
-            this.Items = new ReleaseItem[0];            
+            this.Items = new ReleaseConfigItem[0];            
         }
 
         public static ReleaseConfig Instance

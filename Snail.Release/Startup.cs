@@ -11,6 +11,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Microsoft.AspNetCore.Http;
 using Snail.Release.Core;
+using Snail.Release.Business.Config;
+using System.Text;
 
 namespace Snail.Release
 {
@@ -25,7 +27,9 @@ namespace Snail.Release
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {             
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             services.AddMvc();                      
         }
 
@@ -37,20 +41,20 @@ namespace Snail.Release
                 app.UseDeveloperExceptionPage();
             }
             app.UseMiddleware<UnknownExceptionMiddleware>();
-            app.UseMiddleware<ReleaseMiddleware>();
-            // app.UseResponseCaching();
+            app.UseMiddleware<ReleaseMiddleware>();           
             app.UseMvc();
-            //app.Run(async (context) =>
-            //{
-            //    context.Response.GetTypedHeaders().CacheControl = new CacheControlHeaderValue()
-            //    {
-            //        Public = true,
-            //        MaxAge = TimeSpan.FromSeconds(10)
-            //    };
-            //    context.Response.Headers[HeaderNames.Vary] = new string[] { "Accept-Encoding" };
-
-            //    await context.Response.WriteAsync("Hello World! " + DateTime.UtcNow);
-            //});
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                 OnPrepareResponse = responseContext => 
+                 {                     
+                     if (SystemConfig.Instance.NeedClientCached(responseContext.Context.Request.Path))
+                     {
+                         responseContext.Context.Response.Headers.Remove(HeaderNames.ETag);
+                         responseContext.Context.Response.Headers.Remove(HeaderNames.LastModified);
+                         responseContext.Context.Response.Headers.Add(HeaderNames.CacheControl, "max-age=" + SystemConfig.Instance.ClientCachedTime);
+                     }
+                 }
+            });            
         }
     }
 }

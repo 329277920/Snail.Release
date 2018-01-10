@@ -12,14 +12,26 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.ResponseCaching;
 using System.Net.Http.Headers;
 using System.Text;
+using ServiceStack.OrmLite;
+using ServiceStack.DataAnnotations;
+using Snail.Release.Business.Model;
 
 namespace Snail.Release
 {
     public class Program
     {
+        public class MyClass
+        {
+            public string Name { get; set; }
+        }
+
         public static void Main(string[] args)
         {
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            //var con = new OrmLiteConnectionFactory("server=192.168.10.82;uid=sa;pwd=!23fi!oOp;database=TestDb;", SqlServerDialect.Provider).Open();
+
+            //con.Insert(new NewsInfo() { Title = "new1", Content = "content1" });
+            //con.Insert(new NewsInfo() { Title = "new2", Content = "content2" });
 
             BuildWebHost(args).Run();
 

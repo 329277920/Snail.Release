@@ -8,7 +8,7 @@ namespace Snail.Release.Business.Config
     /// <summary>
     /// 发布项配置
     /// </summary>
-    public class ReleaseItem
+    public class ReleaseConfigItem
     {
         /// <summary>
         /// 模板名称
@@ -26,14 +26,14 @@ namespace Snail.Release.Business.Config
         public string Template { get; set; }
 
         /// <summary>
-        /// 配置项每部分的规则
-        /// </summary>
-        public string Part { get; set; }
-
-        /// <summary>
         /// 缓存提供者
         /// </summary>
         public string Providers { get; set; }
+
+        /// <summary>
+        /// 是否启用客户端缓存
+        /// </summary>
+        public bool ClientCached { get; set; }
 
         /// <summary>
         /// 该发布项是否匹配指定的路径
@@ -44,10 +44,8 @@ namespace Snail.Release.Business.Config
         {
             Init();
             return this._reg.IsMatch(path);
-        }       
+        }
 
-        public List<TempItemPart> Parts;
-       
         private bool _isInit = false;
 
         private Regex _reg;
@@ -69,7 +67,7 @@ namespace Snail.Release.Business.Config
                 return _providers;
             }
         }
-        
+
         private void Init()
         {
             if (this._isInit)
@@ -84,29 +82,12 @@ namespace Snail.Release.Business.Config
                 }
                 this._isInit = true;
             }
-            Parts = new List<TempItemPart>();
-            if (string.IsNullOrEmpty(this.Path) || string.IsNullOrEmpty(this.Part))
+            if (string.IsNullOrEmpty(this.Path))
             {
                 return;
             }
             this._reg = new Regex(this.Path);
             this.Template = System.IO.Path.Combine(SystemConfig.Instance.TemplateFilePath, this.Template);
-            var pathItems = this.Path.Split(new string[] { "/" }, System.StringSplitOptions.RemoveEmptyEntries);
-            var partItems = this.Part.Split(new string[] { "/" }, System.StringSplitOptions.RemoveEmptyEntries);
-            if (pathItems.Length != partItems.Length)
-            {
-                return;
-            }
-            for (var i = 0; i < pathItems.Length; i++)
-            {
-                Parts.Add(new TempItemPart()
-                {
-                    PartType = partItems[i],
-                    Path = pathItems[i]
-                });                 
-            }
         }
-
-       
     }
 }

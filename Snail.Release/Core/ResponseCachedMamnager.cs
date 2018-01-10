@@ -15,16 +15,31 @@ namespace Snail.Release.Core
     public class ResponseCachedMamnager
     {
         private static UnityContainer Container;
-
-        private static bool Success = false;
-
+     
         static ResponseCachedMamnager()
+        {
+            try
+            {
+                InitCachedProviders();
+                SystemConfig.Instance.OnConfigChanged += (sender, e) =>
+                {
+                    InitCachedProviders();
+                };
+            }
+            catch (Exception ex)
+            {
+                // todo: log
+            }
+           
+        }
+
+        private static void InitCachedProviders()
         {
             // 加载缓存提供者
             try
             {
-                Container = new UnityContainer();
-                var providers = ReleaseConfig.Instance?.Providers;
+                var container = new UnityContainer();
+                var providers = SystemConfig.Instance?.Providers;
                 if (providers == null || providers.Length <= 0)
                 {
                     throw new Exception("未配置任何缓存提供者");
@@ -40,9 +55,14 @@ namespace Snail.Release.Core
                     {
                         throw new Exception(string.Format("在程序集{0}中未找到类型{1}.", provider.Assembly, provider.Type));
                     }
-                    Container.RegisterInstance<IResponseCachedProvider>(provider.Name, instance);
+                    instance.Config = provider.Config;
+                    container.RegisterInstance(provider.Name, instance);
+                }              
+                if (Container != null)
+                {
+                    Container.Dispose();
                 }
-                Success = true;
+                Container = container;
             }
             catch (Exception ex)
             {
@@ -52,7 +72,7 @@ namespace Snail.Release.Core
 
         public static async Task<ResponseCachedItem> Get(ReleaseParams releaseParams)
         {
-            if (!Success)
+            if (Container == null)
             {
                 return null;
             }
@@ -88,7 +108,7 @@ namespace Snail.Release.Core
 
         public static async Task<bool> Set(ReleaseParams releaseParams, ResponseCachedItem cachedItem)
         {
-            if (!Success)
+            if (Container == null)
             {
                 return false;
             }

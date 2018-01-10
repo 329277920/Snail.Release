@@ -1,23 +1,18 @@
 ﻿{
-  "providers": [
-    {
-      "name": "file",
-      "assembly": "bin\\Debug\\netcoreapp2.0\\Snail.Release",
-      "type": "Snail.Release.Core.ResponseCachedToFile"
-    },
-    {
-      "name": "memory",
-      "assembly": "bin\\Debug\\netcoreapp2.0\\Snail.Release",
-      "type": "Snail.Release.Core.ResponseCachedToMemory"
-    }
-  ],
   "items": [
     {
+      "name": "index",
+      "template": "index.cshtml",
+      "path": "index",
+      "providers": "memory,file",
+      "clientCached": "true"
+    },
+    {
       "name": "news",
-      "template": "newsInfo.cshtml",
-      "path": "news/[a-zA-Z]+/[1-9]{1}[0-9]*",
-      "part": "none/path/parameter",
-      "providers": "memory,file"
+      "template": "news.cshtml",
+      "path": "news/[\\d]+",
+      "providers": "file",
+      "clientCached": "true"
     }
   ]
 }

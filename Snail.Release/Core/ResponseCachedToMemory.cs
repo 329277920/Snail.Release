@@ -10,6 +10,11 @@ namespace Snail.Release.Core
     /// </summary>
     public class ResponseCachedToMemory : IResponseCachedProvider
     {
+        /// <summary>
+        /// 获取或设置缓存提供者扩展配置
+        /// </summary>
+        public dynamic Config { get; set; }
+
         private static IDictionary<string, ResponseCachedItem> CachedBuffer;
 
         private static System.Threading.ReaderWriterLockSlim Lock;
@@ -25,9 +30,9 @@ namespace Snail.Release.Core
             try
             {
                 Lock.EnterReadLock();
-                if (CachedBuffer.ContainsKey(releaseParams.FilePath))
+                if (CachedBuffer.ContainsKey(releaseParams.Key))
                 {
-                    return CachedBuffer[releaseParams.FilePath];
+                    return CachedBuffer[releaseParams.Key];
                 }                
             }
             finally
@@ -43,11 +48,11 @@ namespace Snail.Release.Core
             try
             {
                 Lock.EnterWriteLock();
-                if (CachedBuffer.ContainsKey(releaseParams.FilePath))
+                if (CachedBuffer.ContainsKey(releaseParams.Key))
                 {
-                    CachedBuffer.Remove(releaseParams.FilePath);
+                    CachedBuffer.Remove(releaseParams.Key);
                 }
-                CachedBuffer.Add(releaseParams.FilePath, cachedItem);
+                CachedBuffer.Add(releaseParams.Key, cachedItem);
                 await Task.CompletedTask;
                 return true;
             }

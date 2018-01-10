@@ -41,7 +41,20 @@ namespace Snail.Release.Core
                     Headers.Add(header.Key, header.Value);
                 }
             }
-            StatusCode = context.Response.StatusCode;
-        }        
+            StatusCode = context.Response.StatusCode;            
+        }
+
+        private string _hashCode;
+        public string HashCode
+        {
+            get
+            {
+                if (_hashCode == null)
+                {
+                    _hashCode = Security.MD5.ComputeHashToHex(Body);
+                }
+                return _hashCode;
+            }
+        }
     }
 }

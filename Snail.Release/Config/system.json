@@ -1,6 +1,29 @@
 ﻿{
   "encoding": "utf-8",
-  "staticFilePath": "data",
   "templateFilePath": "Views",
-  "releasePath": "/release"
+  "releasePath": "/release",
+  "clientCached": "html,htm,jpg",
+  "providers": [
+    {
+      "name": "file",
+      "assembly": "bin\\Debug\\netcoreapp2.0\\Snail.Release",
+      "type": "Snail.Release.Core.ResponseCachedToFile",
+      "config": { "savePath": "data" }
+    },
+    {
+      "name": "memory",
+      "assembly": "bin\\Debug\\netcoreapp2.0\\Snail.Release",
+      "type": "Snail.Release.Core.ResponseCachedToMemory"
+    }
+  ],
+  "databases": [
+    {
+      "name": "sqlserver",
+      "assembly": "bin\\Debug\\netcoreapp2.0\\Snail.Release",
+      "type": "Snail.Release.Business.Persistence.SqlServerProvider",
+      "config": {
+        "connectionString": "server=192.168.10.82;uid=sa;pwd=!23fi!oOp;database=TestDb;"
+      }
+    }
+  ]
 }

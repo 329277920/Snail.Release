@@ -5,10 +5,7 @@ using System.Threading.Tasks;
 
 namespace Snail.Release.Business.Config
 {
-    /// <summary>
-    /// 缓存提供者
-    /// </summary>
-    public class CachedProvider
+    public class SystemDbConfig
     {
         /// <summary>
         /// 提供者名称
@@ -26,7 +23,7 @@ namespace Snail.Release.Business.Config
         public string Type { get; set; }
 
         /// <summary>
-        /// 扩展配置
+        /// 配置参数
         /// </summary>
         public dynamic Config { get; set; }
     }

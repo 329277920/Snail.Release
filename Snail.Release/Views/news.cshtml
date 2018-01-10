@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "news";
+    Layout = "~/Views/layout.cshtml";
+}
+
+@using dbFac = Snail.Release.Business.Persistence.DbProviderManager
+@using Snail.Release.Business.Model;
+@{ var _db = dbFac.Get("sqlserver"); }
+<h2>测试orm</h2>
+
+@{ 
+    foreach(var item in await _db.SelectAsync<NewsInfo>(item => item.Id >= 1))
+    {
+        <div>@item.Title + ":" + @item.Content</div>
+    }
+}

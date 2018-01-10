@@ -40,15 +40,14 @@ namespace Snail.Release.Core
             if (string.IsNullOrEmpty(path))
             {
                 return null;
-            }             
+            }
             foreach (var item in items)
             {
-                var releaseParams = Parse(path, item);
+                var releaseParams = InnerParse(path, item);
                 if (releaseParams != null)
                 {
-                    releaseParams.Uri = path;
-                }
-                return releaseParams;
+                    return releaseParams;
+                }     
             }
             return null;
         }
@@ -59,44 +58,19 @@ namespace Snail.Release.Core
         /// <param name="path"></param>
         /// <param name="releaseItem"></param>
         /// <returns>返回模板,物理路径</returns>
-        public ReleaseParams Parse(string path, ReleaseItem releaseItem)
+        private ReleaseParams InnerParse(string path, ReleaseConfigItem releaseItem)
         {
-            if (!releaseItem.IsMatch(path) || releaseItem.Parts.Count <= 0)
+            if (!releaseItem.IsMatch(path))
             {
                 return null;
-            }
-            var pathParts = SplitPath(path);
-            if (pathParts.Length != releaseItem.Parts.Count)
-            {
-                return null;
-            }
-            var releaseParams = new ReleaseParams() { Template = releaseItem.Template };
+            }             
+            var releaseParams = new ReleaseParams() {
+                Template = releaseItem.Template,
+                ClientCached = releaseItem.ClientCached
+            };
             releaseParams.CachedProviders = releaseItem.TryGetProviders;
-            StringBuilder pathBuilder = new StringBuilder();
-            bool isAppendParam = false;
-            for (var i = 0; i < pathParts.Length; i++)
-            {
-                var part = releaseItem.Parts[i];
-                if (part.PartType == TempItemPartTypes.Path)
-                {
-                    releaseParams.Paths.Add(pathParts[i]);
-                    pathBuilder.Append(pathParts[i]).Append("\\");
-                }
-                else if (part.PartType == TempItemPartTypes.Parameter)
-                {
-                    releaseParams.Parameters.Add(pathParts[i]);
-                    pathBuilder.Append(pathParts[i]);
-                    if (isAppendParam)
-                    {
-                        pathBuilder.Append("_");
-                    }
-                    else
-                    {
-                        isAppendParam = true;
-                    }
-                }
-            }
-            releaseParams.FilePath = Path.Combine(SystemConfig.Instance.StaticFilePath, pathBuilder.ToString());
+            releaseParams.Uri = path;
+            releaseParams.Key = path;
             return releaseParams;
         }
 

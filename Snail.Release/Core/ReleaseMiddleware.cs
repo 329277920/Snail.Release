@@ -8,6 +8,7 @@ using Snail.Release.Business.Config;
 using Snail.Release.Core; 
 using System.IO;
 using System.Threading;
+using Microsoft.Net.Http.Headers;
 
 namespace Snail.Release.Core
 {
@@ -25,7 +26,7 @@ namespace Snail.Release.Core
         {
             var releaseParams = ReleaseRoutes.Instance.Route(context);
             if (releaseParams == null)
-            {
+            {               
                 await base.Invoke(context);
                 return;
             }
@@ -41,7 +42,7 @@ namespace Snail.Release.Core
             context.Response.Body = new ResponseCachedStream(context.Response.Body);
             context.Request.Path = SystemConfig.Instance.ReleasePath;
             await base.Invoke(context);
-            var cachedItem = new ResponseCachedItem(context);
+            var cachedItem = new ResponseCachedItem(context);           
             await Input(cachedItem, releaseParams);            
         }
 
@@ -59,8 +60,19 @@ namespace Snail.Release.Core
                 if (cachedItem == null)
                 {
                     return false;
+                }                
+                context.Response.Headers.Clear();
+                if (releaseParams.ClientCached)
+                {
+                    var clientTag = context.Request.Headers[HeaderNames.IfNoneMatch];
+                    if (!string.IsNullOrEmpty(clientTag) && clientTag == cachedItem.HashCode)
+                    {
+                        context.Response.StatusCode = 304;
+                        return true;
+                    }
+                    context.Response.Headers.Add(HeaderNames.ETag, cachedItem.HashCode);
                 }
-                context.Response.StatusCode = cachedItem.StatusCode;
+                context.Response.StatusCode = cachedItem.StatusCode;                
                 foreach (var header in cachedItem.Headers)
                 {
                     if (!context.Response.Headers.ContainsKey(header.Key))
