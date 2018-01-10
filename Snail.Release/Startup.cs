@@ -15,7 +15,7 @@ using Snail.Release.Business.Config;
 using System.Text;
 
 namespace Snail.Release
-{
+{      
     public class Startup
     {
         public Startup(IConfiguration configuration)
