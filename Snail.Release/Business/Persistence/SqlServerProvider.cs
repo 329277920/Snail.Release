@@ -45,5 +45,18 @@ namespace Snail.Release.Business.Persistence
         {
             return await SelectAsync(predicate, default(CancellationToken));
         }
+
+        public async Task<T> SingleAsync<T>(Expression<Func<T, bool>> predicate, CancellationToken token)
+        {
+            using (var con = await _db.OpenAsync())
+            {
+                return await con.SingleAsync(predicate, token);
+            }
+        }
+
+        public async Task<T> SingleAsync<T>(Expression<Func<T, bool>> predicate)
+        {
+            return await SingleAsync(predicate, default(CancellationToken));
+        }
     }
 }

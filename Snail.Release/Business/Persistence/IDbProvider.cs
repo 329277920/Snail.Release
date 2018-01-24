@@ -17,5 +17,9 @@ namespace Snail.Release.Business.Persistence
         Task<List<T>> SelectAsync<T>(Expression<Func<T, bool>> predicate, CancellationToken token);
 
         Task<List<T>> SelectAsync<T>(Expression<Func<T, bool>> predicate);
+
+        Task<T> SingleAsync<T>(Expression<Func<T, bool>> predicate);
+
+        Task<T> SingleAsync<T>(Expression<Func<T, bool>> predicate, CancellationToken token);
     }
 }

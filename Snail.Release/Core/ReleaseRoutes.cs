@@ -71,6 +71,7 @@ namespace Snail.Release.Core
             releaseParams.CachedProviders = releaseItem.TryGetProviders;
             releaseParams.Uri = path;
             releaseParams.Key = path;
+            releaseParams.Parameters.AddRange(path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
             return releaseParams;
         }
 

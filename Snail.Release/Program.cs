@@ -15,6 +15,10 @@ using System.Text;
 using ServiceStack.OrmLite;
 using ServiceStack.DataAnnotations;
 using Snail.Release.Business.Model;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Server.Kestrel.Https;
+using System.Net;
 
 namespace Snail.Release
 {
@@ -26,22 +30,24 @@ namespace Snail.Release
         }
 
         public static void Main(string[] args)
-        {
-
-            //var con = new OrmLiteConnectionFactory("server=192.168.10.82;uid=sa;pwd=!23fi!oOp;database=TestDb;", SqlServerDialect.Provider).Open();
-
-            //con.Insert(new NewsInfo() { Title = "new1", Content = "content1" });
-            //con.Insert(new NewsInfo() { Title = "new2", Content = "content2" });
-
-            BuildWebHost(args).Run();
-
-            // ServiceContext         
+        {            
+            BuildWebHost(args).Run();         
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseKestrel(ConfigKestrel)
                 .UseStartup<Startup>()
-                .UseUrls("http://*:10000")
+                // .UseUrls("http://*:10000")        
                 .Build();
+
+        private static void ConfigKestrel(KestrelServerOptions opts)
+        {
+            opts.Listen(IPAddress.Parse("192.168.10.82"), 10000, listenOptions =>
+            {
+                //填入之前iis中生成的pfx文件路径和指定的密码　　　　　　　　　　　　
+                listenOptions.UseHttps(@"F:\Git\Snail.Release\Snail.Release\wwwroot\crt\webrtc1.pfx", "chennanfei");
+            });
+        }
     }
 }

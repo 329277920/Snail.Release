@@ -23,7 +23,7 @@ namespace Snail.Release.Core
         }
 
         public override async Task Invoke(HttpContext context)
-        {
+        {            
             var releaseParams = ReleaseRoutes.Instance.Route(context);
             if (releaseParams == null)
             {               
